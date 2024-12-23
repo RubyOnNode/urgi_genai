@@ -1,5 +1,5 @@
 // src/components/Auth/Login.js  
-import React from 'react';
+import {useState, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
@@ -12,13 +12,28 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, token } = useSelector((state) => state.auth);
+  const [localError, setLocalError] = useState(null); // Local error state
+  const [isSubmitting, setIsSubmitting] = useState(false); // Prevent multiple submissions
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (token) {
       console.log(`In Login component ${token}`)
       navigate('/dashboard');
     }
   }, [token, navigate]);
+
+  const handleSubmit = async (values) => {
+          setIsSubmitting(true); // Prevent multiple submissions
+          setLocalError(null); // Clear previous error
+          try {
+            await dispatch(login(values)).unwrap(); // Dispatch action and wait for response
+              console.log('Login successful');
+          } catch (err) {
+              setLocalError(err.message || 'Login failed'); // Handle errors
+          } finally {
+              setIsSubmitting(false); // Re-enable the form
+          }
+      };
 
   return (
     <Container maxWidth="sm">
@@ -26,19 +41,15 @@ const Login = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Login
         </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
         <Formik
           initialValues={{
             email: '',
             password: '',
           }}
           validationSchema={loginSchema}
-          onSubmit={(values) => {
-            console.log(`Login Submit: ${values}`);
-            dispatch(login(values));
-          }}
+          onSubmit={handleSubmit}
         >
-          {({ isSubmitting }) => (
+          {() => (
             <Form>
               <Box sx={{ mb: 2 }}>
                 <Field
@@ -67,6 +78,11 @@ const Login = () => {
               >
                 {loading ? 'Logging in...' : 'Login'}
               </Button>
+              {(localError || error) && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {localError || error}
+                </Alert>
+              )}
             </Form>
           )}
         </Formik>

@@ -1,11 +1,8 @@
 // controllers/fileController.js  
 const File = require('../models/File');
 const { BlobServiceClient } = require('@azure/storage-blob');
-const dotenv = require('dotenv');
 const multer = require('multer');
 const path = require('path');
-
-dotenv.config();
 
 // Initialize Azure Blob Service Client  
 const blobServiceClient = BlobServiceClient.fromConnectionString(
@@ -13,15 +10,16 @@ const blobServiceClient = BlobServiceClient.fromConnectionString(
 );
 
 const containerClient = blobServiceClient.getContainerClient(
-  process.env.AZURE_CONTAINER_NAME
+  process.env.AZURE_STORAGE_CONTAINER_NAME
 );
 
 // Ensure the container exists  
 const createContainerIfNotExists = async () => {
+  console.log( `Azure Container name: ${process.env.AZURE_STORAGE_CONTAINER_NAME}`)
   const exists = await containerClient.exists();
   if (!exists) {
     await containerClient.create();
-    console.log(`Container "${process.env.AZURE_CONTAINER_NAME}" created.`);
+    console.log(`Container "${process.env.AZURE_STORAGE_CONTAINER_NAME}" created.`);
   }
 };
 
@@ -29,21 +27,24 @@ createContainerIfNotExists().catch((error) => {
   console.error('Error creating container:', error.message);
 });
 
+
 // Configure Multer storage (in-memory)  
 const storage = multer.memoryStorage();
 // In fileController.js  
 const upload = multer({
   storage,
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB  
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|pdf|docx|txt/;
+  fileFilter: fileFilter = (req, file, cb) => {
+    console.log('File received by Multer:', file);
+  
+    const filetypes = /jpeg|jpg|png|pdf|docx|txt|text/;
     const mimetype = filetypes.test(file.mimetype);
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
+  
     if (mimetype && extname) {
       return cb(null, true);
     }
-    cb(new Error('Error: File upload only supports certain filetypes!'));
+    cb(new Error('Error: File upload only supports the following types: JPEG, JPG, PNG, PDF, DOCX, TXT'));
   },
 }).single('file');  
 

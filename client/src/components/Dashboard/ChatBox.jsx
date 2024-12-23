@@ -1,5 +1,5 @@
 // src/components/Dashboard/ChatBox.js  
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -13,17 +13,15 @@ import {
   Select,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendMessage, fetchChats } from '../../features/chats/chatsSlice';
+import { sendMessage, fetchChats, addMessage } from '../../features/chats/chatsSlice';
 import { fetchFiles } from '../../features/files/filesSlice';
 import UserInfo from './UserInfo';
-import FileUpload from './FileUpload';
 import { toast } from 'react-toastify';
 
 const ChatBox = () => {
   const dispatch = useDispatch();
   const { messages, loading, error } = useSelector((state) => state.chats);
   const { files } = useSelector((state) => state.files);
-  const { user } = useSelector((state) => state.auth);
 
   const [query, setQuery] = useState('');
   const [selectedFileId, setSelectedFileId] = useState('');
@@ -51,6 +49,7 @@ const ChatBox = () => {
   };
 
   const handleSend = () => {
+    
     if (!query.trim()) {
       setLocalError('Please enter a message.');
       return;
@@ -63,10 +62,22 @@ const ChatBox = () => {
 
     setLocalError('');
 
+    // Create a new message object for the user's query
+    const newMessage = {
+      id: Date.now(), // You can use a unique ID for the message
+      sender: 'user',
+      text: query,
+      timestamp: Date.now(),
+    };
+
+    // Optimistically update the UI with the new message
+    dispatch(addMessage(newMessage));
+
     dispatch(sendMessage({ query, fileId: selectedFileId || null }))
       .unwrap()
       .then(() => {
-        // Success  
+        // Success 
+        // dispatch(fetchChats());
       })
       .catch(() => {
         // Error handled by useEffect  
@@ -79,8 +90,6 @@ const ChatBox = () => {
     <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* User Information */}
       <UserInfo/>
-      {/* File Upload Component */}
-      <FileUpload />
 
       {/* Chat Messages */}
       <Box
@@ -167,7 +176,7 @@ const ChatBox = () => {
           fullWidth
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={(e) => {
+          onKeyUp={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
               handleSend();

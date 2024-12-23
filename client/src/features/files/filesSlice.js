@@ -8,6 +8,7 @@ export const uploadFile = createAsyncThunk(
   async (file, { rejectWithValue }) => {
     try {
       const response = await filesAPI.uploadFile(file);
+      console.log(response.data)
       return response.data; // Expected: { id, filename, url, uploadedAt }  
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -21,6 +22,7 @@ export const fetchFiles = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await filesAPI.fetchFiles();
+      console.log(response)
       return response.data; // Expected: Array of files  
     } catch (err) {
       return rejectWithValue(err.response.data);

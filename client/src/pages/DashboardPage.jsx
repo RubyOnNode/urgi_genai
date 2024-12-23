@@ -1,5 +1,4 @@
 // src/pages/DashboardPage.js  
-import React from 'react';
 import { Box } from '@mui/material';
 import Sidebar from '../components/Dashboard/Sidebar';
 import ChatBox from '../components/Dashboard/ChatBox';

@@ -1,5 +1,5 @@
 // src/components/Dashboard/Sidebar.js  
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   Drawer,
   List,
@@ -12,13 +12,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChats } from '../../features/chats/chatsSlice';
 import { fetchFiles } from '../../features/files/filesSlice';
-import { useNavigate } from 'react-router-dom';
+import FileUpload from './FileUpload';
 
 const drawerWidth = 300;
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { messages } = useSelector((state) => state.chats);
   const { files } = useSelector((state) => state.files);
 
@@ -50,35 +49,44 @@ const Sidebar = () => {
         [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
       }}
     >
-      <Box sx={{ overflow: 'auto' }}>
-        <Typography variant="h6" align="center" sx={{ my: 2 }}>
-          Chat History
-        </Typography>
-        <Divider />
-        <List>
-          {messages.map((msg) => (
-            <ListItem button key={msg.id} onClick={() => handleChatClick(msg.id)}>
-              <ListItemText
-                primary={msg.sender === 'user' ? 'You' : 'AI'}
-                secondary={msg.text.substring(0, 50) + (msg.text.length > 50 ? '...' : '')}
-              />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <Typography variant="h6" align="center" sx={{ my: 2 }}>
-          Uploaded Files
-        </Typography>
-        <List>
-          {files.map((file) => (
-            <ListItem button key={file.id} onClick={() => handleFileClick(file.id)}>
-              <ListItemText primary={file.filename} />
-            </ListItem>
-          ))}
-        </List>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Fixed Upload Files Section */}
+        <Box sx={{ position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#f9f9f9', borderBottom: '1px solid #e0e0e0', p: 2 }}>
+          <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+            Upload Files
+          </Typography>
+            <FileUpload />
+            <Divider sx={{ my: 2 }} />
+          <Typography variant="h6" align="center" sx={{ mt: 3, mb: 2 }}>
+            Files
+          </Typography>
+          <List>
+            {files.map((file) => (
+              <ListItem button key={file.id} onClick={() => handleFileClick(file.id)}>
+                <ListItemText primary={file.filename} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+  
+        {/* Scrollable Chat History */}
+        <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
+          <List>
+            {messages.map((msg) => (
+              <ListItem button key={msg.id} onClick={() => handleChatClick(msg.id)}>
+                <ListItemText
+                  primary={msg.sender === 'user' ? 'You' : 'AI'}
+                  secondary={msg.text.substring(0, 50) + (msg.text.length > 50 ? '...' : '')}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       </Box>
     </Drawer>
   );
+  
+  
 };
 
 export default Sidebar;  

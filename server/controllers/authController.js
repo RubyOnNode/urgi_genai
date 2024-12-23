@@ -16,9 +16,11 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register  
 // @access  Public  
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
 
   console.log(req.body)
+
+  const { username, email, password } = req.body;
+
 
   // Validate input  
   if (!username || !email || !password) {
@@ -26,11 +28,15 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    // Check if user exists  
-    const userExists = await User.findOne({ email });
+    // Check if email or username already exists  
+    const userExists = await User.findOne({
+      $or: [{ email }, { username }],
+    });
 
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+      return res.status(400).json({
+        message: 'User already exists with this email or username',
+      });
     }
 
     // Create user  

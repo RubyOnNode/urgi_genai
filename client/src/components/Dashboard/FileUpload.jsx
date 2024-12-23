@@ -1,5 +1,5 @@
 // src/components/Dashboard/FileUpload.js  
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
   Button,
@@ -41,49 +41,48 @@ const FileUpload = () => {
       })
       .catch(() => {
         // Error is handled by Redux  
-        toast.error(error || 'Failed to upload file.');
+        toast.error('Failed to upload file.');
       });
   };
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Typography variant="subtitle1">Upload a File</Typography>
+    <Box>
       {error && (
-        <Alert severity="error" sx={{ mt: 1 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
       {localError && (
-        <Alert severity="warning" sx={{ mt: 1 }}>
+        <Alert severity="warning" sx={{ mb: 2 }}>
           {localError}
         </Alert>
       )}
       {successMessage && (
-        <Alert severity="success" sx={{ mt: 1 }}>
+        <Alert severity="success" sx={{ mb: 2 }}>
           {successMessage}
         </Alert>
       )}
-      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-        <Button variant="contained" component="label">
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <Button variant="contained" component="label" sx={{ mr: 2 }}>
           Select File
           <input type="file" hidden onChange={handleFileChange} />
         </Button>
-        <Typography variant="body2" sx={{ ml: 2 }}>
+        <Typography variant="body2">
           {file ? file.name : 'No file selected'}
         </Typography>
       </Box>
-      <Box sx={{ mt: 1 }}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleUpload}
-          disabled={loading || !file}
-        >
-          {loading ? <CircularProgress size={24} /> : 'Upload'}
-        </Button>
-      </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleUpload}
+        disabled={loading || !file}
+        startIcon={loading ? <CircularProgress size={20} /> : null}
+      >
+        {loading ? 'Uploading...' : 'Upload'}
+      </Button>
     </Box>
   );
+  
 };
 
 export default FileUpload;  
