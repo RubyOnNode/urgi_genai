@@ -31,7 +31,7 @@ export const fetchChats = createAsyncThunk(
 const chatsSlice = createSlice({
   name: 'chats',
   initialState: {
-    messages: [], // { id, sender: 'user' | 'bot', text, timestamp }  
+    messages: [], // { _id, sender: 'user' | 'bot', text, timestamp }  
     loading: false,
     error: null,
   },
@@ -55,7 +55,7 @@ const chatsSlice = createSlice({
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.loading = false;
         state.messages.push({
-          id: action.payload.id,
+          _id: action.payload._id,
           sender: 'bot',
           text: action.payload.message,
           timestamp: action.payload.timestamp,
@@ -73,7 +73,7 @@ const chatsSlice = createSlice({
       .addCase(fetchChats.fulfilled, (state, action) => {
         state.loading = false;
         state.messages = action.payload.map((msg) => ({
-          id: msg.id,
+          _id: msg._id,
           sender: msg.sender,
           text: msg.text,
           timestamp: msg.timestamp,

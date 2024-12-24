@@ -44,7 +44,7 @@ const sendMessage = async (req, res) => {
     });
 
     res.status(201).json({
-      id: chat._id,
+      _id: chat._id,
       message: chat.response,
       timestamp: chat.createdAt,
     });
@@ -58,17 +58,18 @@ const sendMessage = async (req, res) => {
 // @route   GET /api/chats/history  
 // @access  Private  
 const getChatHistory = async (req, res) => {
+  console.log("Fetch Chat Request")
   try {
     const chats = await Chat.find({ user: req.user._id }).sort({ createdAt: 1 });
 
     const formattedChats = chats.map((chat) => ({
-      id: chat._id,
+      _id: chat._id,
       sender: 'user',
       text: chat.message,
       timestamp: chat.createdAt,
     })).concat(
       chats.map(chat => ({
-        id: chat._id + '_response',
+        _id: chat._id + '_response',
         sender: 'bot',
         text: chat.response,
         timestamp: chat.createdAt,

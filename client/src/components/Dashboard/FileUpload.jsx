@@ -1,4 +1,4 @@
-// src/components/Dashboard/FileUpload.js  
+// src/components/Dashboard/FileUpload.js    
 import { useState } from 'react';
 import {
   Box,
@@ -8,12 +8,14 @@ import {
   Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadFile } from '../../features/files/filesSlice';
+import { uploadFile, fetchFiles } from '../../features/files/filesSlice';
 import { toast } from 'react-toastify';
 
 const FileUpload = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.files);
+
+  // useState  
   const [file, setFile] = useState(null);
   const [localError, setLocalError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -30,7 +32,7 @@ const FileUpload = () => {
       return;
     }
 
-    // Optionally, add file type or size validations here  
+    // Optionally, add file type or size validations here    
 
     dispatch(uploadFile(file))
       .unwrap()
@@ -38,9 +40,10 @@ const FileUpload = () => {
         setSuccessMessage('File uploaded successfully!');
         setFile(null);
         toast.success('File uploaded successfully!');
+        dispatch(fetchFiles()); // Fetch updated list of files  
       })
       .catch(() => {
-        // Error is handled by Redux  
+        // Error is handled by Redux    
         toast.error('Failed to upload file.');
       });
   };
@@ -68,7 +71,7 @@ const FileUpload = () => {
           <input type="file" hidden onChange={handleFileChange} />
         </Button>
         <Typography variant="body2">
-          {file ? file.name : 'No file selected'}
+          {file ? file.filename : 'No file selected'}
         </Typography>
       </Box>
       <Button
@@ -82,7 +85,7 @@ const FileUpload = () => {
       </Button>
     </Box>
   );
-  
+
 };
 
 export default FileUpload;  

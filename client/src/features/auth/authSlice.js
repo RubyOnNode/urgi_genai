@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authAPI from './authAPI';
 
-const token = localStorage.getItem('token');
+// const token = localStorage.getItem('token');
 
 const initialState = {
   user: null,
-  token: token ? token : null,
+  // token: token ? token : null,
+  token: null,
   loading: false,
   error: null,
 };
@@ -62,8 +63,13 @@ const authSlice = createSlice({
       localStorage.removeItem('token');
     },
     setUser(state, action) {
-      console.log(action.payload);
-      state.user = action.payload;
+      console.log(`Setting user in auth slice ${action.payload}`);
+      state.user = {
+        _id: action.payload._id,
+        username: action.payload.username,
+        email: action.payload.email,
+      };
+      localStorage.setItem('token', action.payload.token);
     },
   },
   extraReducers: (builder) => {
@@ -108,19 +114,19 @@ const authSlice = createSlice({
         state.error = action.payload.message || 'Login failed';
       })
 
-      // Fetch Current User Cases  
-      .addCase(fetchCurrentUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(fetchCurrentUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload.message || 'Failed to fetch user';
-      });
+      // // Fetch Current User Cases  
+      // .addCase(fetchCurrentUser.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.user = action.payload;
+      // })
+      // .addCase(fetchCurrentUser.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload.message || 'Failed to fetch user';
+      // });
   },
 });
 

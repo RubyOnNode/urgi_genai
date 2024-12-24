@@ -18,10 +18,13 @@ const drawerWidth = 300;
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const { messages } = useSelector((state) => state.chats);
+  // const { messages } = useSelector((state) => state.chats);
   const { files } = useSelector((state) => state.files);
 
+  console.log("Sidebar Rendered")
+
   useEffect(() => {
+    console.log("Fetching files and chats in side bar")
     dispatch(fetchChats());
     dispatch(fetchFiles());
   }, [dispatch]);
@@ -70,7 +73,7 @@ const Sidebar = () => {
         </Box>
   
         {/* Scrollable Chat History */}
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
+        {/* <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
           <List>
             {messages.map((msg) => (
               <ListItem button key={msg.id} onClick={() => handleChatClick(msg.id)}>
@@ -81,8 +84,8 @@ const Sidebar = () => {
               </ListItem>
             ))}
           </List>
-        </Box>
-      </Box>
+        </Box>*/}
+      </Box> 
     </Drawer>
   );
   

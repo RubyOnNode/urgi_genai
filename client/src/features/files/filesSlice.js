@@ -1,5 +1,5 @@
 // src/features/files/filesSlice.js  
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, combineSlices } from '@reduxjs/toolkit';
 import filesAPI from './filesAPI';
 
 // Thunk to upload a file  
@@ -22,6 +22,7 @@ export const fetchFiles = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await filesAPI.fetchFiles();
+      console.log("Fetching files in files slice ")
       console.log(response)
       return response.data; // Expected: Array of files  
     } catch (err) {
@@ -66,12 +67,8 @@ const filesSlice = createSlice({
       })
       .addCase(fetchFiles.fulfilled, (state, action) => {
         state.loading = false;
-        state.files = action.payload.map((file) => ({
-          id: file.id,
-          filename: file.filename,
-          url: file.url,
-          uploadedAt: file.uploadedAt,
-        }));
+        state.files = action.payload
+        console.log(state.files)
       })
       .addCase(fetchFiles.rejected, (state, action) => {
         state.loading = false;

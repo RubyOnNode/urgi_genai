@@ -7,11 +7,13 @@ import {
   Button,
   CircularProgress,
   Alert,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
+  IconButton,
+  Menu,
+  MenuItem
 } from '@mui/material';
+
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage, fetchChats, addMessage } from '../../features/chats/chatsSlice';
 import { fetchFiles } from '../../features/files/filesSlice';
@@ -23,16 +25,26 @@ const ChatBox = () => {
   const { messages, loading, error } = useSelector((state) => state.chats);
   const { files } = useSelector((state) => state.files);
 
+
+
   const [query, setQuery] = useState('');
   const [selectedFileId, setSelectedFileId] = useState('');
   const [localError, setLocalError] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const messagesEndRef = useRef(null);
 
+  console.log("ChatBox rendered")
+
   useEffect(() => {
+    console.log("Fetching Files and CHats in ChatBox")
     dispatch(fetchChats());
     dispatch(fetchFiles());
   }, [dispatch]);
+
+  console.table(messages)
+  
+  console.table(files)
 
   useEffect(() => {
     scrollToBottom();
@@ -55,16 +67,11 @@ const ChatBox = () => {
       return;
     }
 
-    if (files.length > 0 && !selectedFileId) {
-      setLocalError('Please select a file or choose to send without a file.');
-      return;
-    }
-
     setLocalError('');
 
     // Create a new message object for the user's query
     const newMessage = {
-      id: Date.now(), // You can use a unique ID for the message
+      _id: Date.now(), // You can use a unique ID for the message
       sender: 'user',
       text: query,
       timestamp: Date.now(),
@@ -86,10 +93,12 @@ const ChatBox = () => {
     setQuery('');
   };
 
+
+
   return (
     <Box sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* User Information */}
-      <UserInfo/>
+      <UserInfo />
 
       {/* Chat Messages */}
       <Box
@@ -135,41 +144,39 @@ const ChatBox = () => {
         </Alert>
       )}
 
-      {/* File Selection */}
-      {files.length > 0 ? (
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="file-select-label">Select a File</InputLabel>
-          <Select
-            labelId="file-select-label"
-            value={selectedFileId}
-            label="Select a File"
-            onChange={(e) => setSelectedFileId(e.target.value)}
+      {/* Message Input and File Selection */}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {/* Attach File Icon */}
+        <Box>
+          <IconButton
+            color="primary"
+            onClick={(e) => setAnchorEl(e.currentTarget)} // Open menu on click
           >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {files.map((file) => (
-              <MenuItem key={file.id} value={file.id}>
-                {file.filename}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      ) : (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          No files uploaded. Please upload a file to associate with your messages.
-        </Alert>
-      )}
-
-      {/* Option to send without a file if files are available */}
-      {files.length > 0 && (
-        <Box sx={{ textAlign: 'center', mb: 2 }}>
-          <Typography variant="body2">Or send without selecting a file.</Typography>
+            <AttachFileIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)} // Close menu
+          >
+            {files.length > 0 ? (
+              files.map((file) => (
+                <MenuItem
+                  key={file._id}
+                  onClick={() => {
+                    setSelectedFileId(file._id);
+                    setAnchorEl(null); // Close menu after selecting
+                  }}
+                >
+                  {file.filename}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>No files uploaded</MenuItem>
+            )}
+          </Menu>
         </Box>
-      )}
 
-      {/* Message Input and Send Button */}
-      <Box sx={{ display: 'flex' }}>
         <TextField
           variant="outlined"
           label="Type your message..."
@@ -182,12 +189,12 @@ const ChatBox = () => {
               handleSend();
             }
           }}
+          sx={{ flexGrow: 1, mr: 1 }}
         />
         <Button
           variant="contained"
           color="primary"
           onClick={handleSend}
-          sx={{ ml: 1 }}
           disabled={loading}
         >
           {loading ? <CircularProgress size={24} /> : 'Send'}
@@ -195,6 +202,6 @@ const ChatBox = () => {
       </Box>
     </Box>
   );
-};
 
+}
 export default ChatBox;  

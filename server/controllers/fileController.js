@@ -15,7 +15,7 @@ const containerClient = blobServiceClient.getContainerClient(
 
 // Ensure the container exists  
 const createContainerIfNotExists = async () => {
-  console.log( `Azure Container name: ${process.env.AZURE_STORAGE_CONTAINER_NAME}`)
+  console.log(`Azure Container name: ${process.env.AZURE_STORAGE_CONTAINER_NAME}`)
   const exists = await containerClient.exists();
   if (!exists) {
     await containerClient.create();
@@ -36,17 +36,17 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB  
   fileFilter: fileFilter = (req, file, cb) => {
     console.log('File received by Multer:', file);
-  
+
     const filetypes = /jpeg|jpg|png|pdf|docx|txt|text/;
     const mimetype = filetypes.test(file.mimetype);
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  
+
     if (mimetype && extname) {
       return cb(null, true);
     }
     cb(new Error('Error: File upload only supports the following types: JPEG, JPG, PNG, PDF, DOCX, TXT'));
   },
-}).single('file');  
+}).single('file');
 
 // @desc    Upload a file  
 // @route   POST /api/files/upload  
@@ -77,12 +77,8 @@ const uploadFile = (req, res) => {
         url: blockBlobClient.url,
       });
 
-      res.status(201).json({
-        id: file._id,
-        filename: file.filename,
-        url: file.url,
-        uploadedAt: file.uploadedAt,
-      });
+      res.status(201).json({id: file._id, filename: file.filename});
+
     } catch (error) {
       console.error('Azure Blob upload error:', error.message);
       res.status(500).json({ message: 'File upload failed', error: error.message });
@@ -94,8 +90,9 @@ const uploadFile = (req, res) => {
 // @route   GET /api/files  
 // @access  Private  
 const getUserFiles = async (req, res) => {
+  console.log("get User Files")
   try {
-    const files = await File.find({ user: req.user._id }).sort({ uploadedAt: -1 });
+    const files = await File.find({ user: req.user._id },).sort({ uploadedAt: -1 });
     res.json(files);
   } catch (error) {
     console.error('Get files error:', error.message);

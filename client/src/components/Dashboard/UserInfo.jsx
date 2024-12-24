@@ -5,10 +5,10 @@ import { useSelector, shallowEqual } from 'react-redux';
 
 const UserInfo = () => {
   const user = useSelector((state) => state.auth.user, shallowEqual);
-  console.log('In UserInfo:', user);
+  console.log("UserInfo Rendered");
 
   if (!user) {
-    return <Typography variant="h6">Loading user information...</Typography>;
+    return <Typography variant="h6">Guest User</Typography>;
   }
 
   return (
