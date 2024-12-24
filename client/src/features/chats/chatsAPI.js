@@ -5,8 +5,9 @@ const sendMessage = ({ query, fileId }) => {
   return axiosInstance.post('/chats/send', { query, fileId });
 };
 
-const fetchChats = () => {
-  return axiosInstance.get('/chats/history');
+const fetchChats = ({ fileId }) => {
+  console.log(fileId)
+  return axiosInstance.post('/chats/history', { fileId });
 };
 
 export default {

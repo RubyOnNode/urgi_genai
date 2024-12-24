@@ -22,8 +22,6 @@ export const fetchFiles = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await filesAPI.fetchFiles();
-      console.log("Fetching files in files slice ")
-      console.log(response)
       return response.data; // Expected: Array of files  
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -34,7 +32,7 @@ export const fetchFiles = createAsyncThunk(
 const filesSlice = createSlice({
   name: 'files',
   initialState: {
-    files: [], // { id, filename, url, uploadedAt }  
+    files: [], // { _id, filename, url, uploadedAt }  
     loading: false,
     error: null,
   },

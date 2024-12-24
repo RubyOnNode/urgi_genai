@@ -8,6 +8,6 @@ const { protect } = require('../middleware/authMiddleware');
 router.post('/send', protect, sendMessage);
 
 // Get Chat History  
-router.get('/history', protect, getChatHistory);
+router.post('/history', protect, getChatHistory);
 
 module.exports = router;  

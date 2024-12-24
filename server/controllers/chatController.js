@@ -59,8 +59,9 @@ const sendMessage = async (req, res) => {
 // @access  Private  
 const getChatHistory = async (req, res) => {
   console.log("Fetch Chat Request")
+  console.log(req.body)
   try {
-    const chats = await Chat.find({ user: req.user._id }).sort({ createdAt: 1 });
+    const chats = await Chat.find({ user: req.user._id, fileId: req.body.fileId }).sort({ createdAt: 1 });
 
     const formattedChats = chats.map((chat) => ({
       _id: chat._id,

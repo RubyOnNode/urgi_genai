@@ -91,6 +91,7 @@ const uploadFile = (req, res) => {
 // @access  Private  
 const getUserFiles = async (req, res) => {
   console.log("get User Files")
+  console.log(req.body)
   try {
     const files = await File.find({ user: req.user._id },).sort({ uploadedAt: -1 });
     res.json(files);

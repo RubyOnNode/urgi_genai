@@ -18,9 +18,9 @@ export const sendMessage = createAsyncThunk(
 // Thunk to fetch chat history  
 export const fetchChats = createAsyncThunk(
   'chats/fetchChats',
-  async (_, { rejectWithValue }) => {
+  async ({fileId}, { rejectWithValue }) => {
     try {
-      const response = await chatsAPI.fetchChats();
+      const response = await chatsAPI.fetchChats({fileId});
       return response.data; // Expected: Array of messages  
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -55,10 +55,10 @@ const chatsSlice = createSlice({
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.loading = false;
         state.messages.push({
-          _id: action.payload._id,
           sender: 'bot',
           text: action.payload.message,
           timestamp: action.payload.timestamp,
+          fileId: action.payload.fileId
         });
       })
       .addCase(sendMessage.rejected, (state, action) => {

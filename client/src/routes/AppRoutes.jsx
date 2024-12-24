@@ -3,7 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Register from '../components/Auth/Register';
 import Login from '../components/Auth/Login';
-import DashboardPage from '../pages/DashboardPage';
+import Dashboard from '../pages/Dashboard';
 import PrivateRoute from '../components/Common/PrivateRoute';
 
 const AppRoutes = () => {
@@ -15,7 +15,7 @@ const AppRoutes = () => {
         path="/dashboard"
         element={
           <PrivateRoute>
-            <DashboardPage />
+            <Dashboard />
           </PrivateRoute>
         }
       />
