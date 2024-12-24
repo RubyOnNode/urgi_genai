@@ -15,8 +15,7 @@ import {
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { sendMessage, fetchChats, addMessage } from '../../features/chats/chatsSlice';
-import { fetchFiles } from '../../features/files/filesSlice';
+import { sendMessage, addMessage } from '../../features/chats/chatsSlice';
 import UserInfo from './UserInfo';
 import { toast } from 'react-toastify';
 
@@ -24,8 +23,6 @@ const ChatBox = () => {
   const dispatch = useDispatch();
   const { messages, loading, error } = useSelector((state) => state.chats);
   const { files } = useSelector((state) => state.files);
-
-
 
   const [query, setQuery] = useState('');
   const [selectedFileId, setSelectedFileId] = useState('');
@@ -35,16 +32,6 @@ const ChatBox = () => {
   const messagesEndRef = useRef(null);
 
   console.log("ChatBox rendered")
-
-  useEffect(() => {
-    console.log("Fetching Files and CHats in ChatBox")
-    dispatch(fetchChats());
-    dispatch(fetchFiles());
-  }, [dispatch]);
-
-  console.table(messages)
-  
-  console.table(files)
 
   useEffect(() => {
     scrollToBottom();

@@ -1,5 +1,4 @@
 // src/components/Dashboard/Sidebar.js  
-import { useEffect } from 'react';
 import {
   Drawer,
   List,
@@ -9,25 +8,17 @@ import {
   Divider,
   Box,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchChats } from '../../features/chats/chatsSlice';
-import { fetchFiles } from '../../features/files/filesSlice';
+import { useSelector } from 'react-redux';
+
 import FileUpload from './FileUpload';
 
 const drawerWidth = 300;
 
 const Sidebar = () => {
-  const dispatch = useDispatch();
   // const { messages } = useSelector((state) => state.chats);
   const { files } = useSelector((state) => state.files);
 
   console.log("Sidebar Rendered")
-
-  useEffect(() => {
-    console.log("Fetching files and chats in side bar")
-    dispatch(fetchChats());
-    dispatch(fetchFiles());
-  }, [dispatch]);
 
   const handleChatClick = (chatId) => {
     // Implement navigation to a specific chat if applicable  
