@@ -32,7 +32,7 @@ import {addMessage, sendMessage, clearChats, fetchChats } from '../features/chat
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const {user} = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.auth.user);
   const files = useSelector((state) => state.files.files);
   const filesLoading = useSelector((state) => state.files.loading);
   const filesError = useSelector((state) => state.files.error);
@@ -81,8 +81,7 @@ const Dashboard = () => {
 
   const handleSelectFile = (file) => {
     setSelectedFile(file);
-    if(selectedFile)
-      dispatch(fetchChats({fileId: file._id})); // Clear previous chat messages when selecting a new file  
+    dispatch(fetchChats({fileId: file._id})); // Clear previous chat messages when selecting a new file  
     setSnackbar({ open: true, message: `Selected file: ${file.filename}`, severity: 'info' });
   };
 
@@ -128,7 +127,7 @@ const Dashboard = () => {
         <Toolbar>
           <Avatar sx={{ mr: 2 }}>AI</Avatar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            AI Chat Dashboard
+            AI Dashboard
           </Typography>
           <Box sx={{ textAlign: 'right', mr: 2 }}>
             <Typography variant="body1">{user.username}</Typography>

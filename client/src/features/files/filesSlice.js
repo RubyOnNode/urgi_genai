@@ -9,7 +9,7 @@ export const uploadFile = createAsyncThunk(
     try {
       const response = await filesAPI.uploadFile(file);
       console.log(response.data)
-      return response.data; // Expected: { id, filename, url, uploadedAt }  
+      return response.data; // Expected: { _id, filename, url, uploadedAt }  
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
