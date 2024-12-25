@@ -28,6 +28,23 @@ export const fetchChats = createAsyncThunk(
   }
 );
 
+// Thunk to clear chats
+export const clearChatsThunk = createAsyncThunk(
+  'chats/clearChats',
+  async ({ fileId }, { rejectWithValue }) => {
+    try {
+      const response = await chatsAPI.clearChats({ fileId }); // Assuming chatsAPI.clearChats sends the delete request
+      console.log("in clear thunk")
+      console.log(response.data)
+      return response.data; // Expected: { message: 'Chats cleared successfully' }
+    } catch (err) {
+      console.log("in clear eror")
+      console.log(err.response.data)
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const chatsSlice = createSlice({
   name: 'chats',
   initialState: {
@@ -82,6 +99,20 @@ const chatsSlice = createSlice({
       .addCase(fetchChats.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message || 'Failed to fetch chats';
+      })
+      // clearChats
+      .addCase(clearChatsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(clearChatsThunk.fulfilled, (state) => {
+        state.loading = false;
+        state.messages = []; // Clear all messages in state
+      })
+      .addCase(clearChatsThunk.rejected, (state, action) => {
+        state.loading = false;
+        console.log("Tried tgus")
+        state.error = action.payload.message || 'Failed to clear chats';
       });
   },
 });

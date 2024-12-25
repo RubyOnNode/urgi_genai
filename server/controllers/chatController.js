@@ -84,7 +84,48 @@ const getChatHistory = async (req, res) => {
   }
 };
 
+
+
+// controllers/chatController.js
+
+const clearChats = async (req, res) => {
+  console.log("Clear Chats")
+  console.log(req.body)
+  const { fileId } = req.body;
+  const userId = req.user?._id;
+
+  if (!fileId) {
+    return res.status(400).json({ message: 'fileId is required' });
+  }
+
+  try {
+    // Verify if the user owns the chats associated with the fileId
+    const chats = await Chat.find({ fileId });
+
+    if (!chats.length) {
+      return res.status(404).json({ message: 'No chats found for the provided fileId' });
+    }
+
+    const unauthorizedChats = chats.some((chat) => chat.user.toString() !== userId.toString());
+
+    if (unauthorizedChats) {
+      return res.status(403).json({ message: 'You are not authorized to clear these chats' });
+    }
+
+    // If authorized, delete the chats
+    await Chat.deleteMany({ fileId });
+    res.status(200).json({
+      message: 'Chats cleared successfully',
+    });
+  } catch (error) {
+    console.error('Error clearing chats:', error);
+    res.status(500).json({ message: 'An error occurred while clearing chats', error: error.message });
+  }
+};
+
+
 module.exports = {
   sendMessage,
   getChatHistory,
+  clearChats
 };  

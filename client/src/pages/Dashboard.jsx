@@ -1,5 +1,5 @@
 // components/Dashboard.js  
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   AppBar,
@@ -26,9 +26,10 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SendIcon from '@mui/icons-material/Send';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { logout } from '../features/auth/authSlice'; // Adjust the import path  
 import { uploadFile, fetchFiles } from '../features/files/filesSlice'; // Adjust the import path  
-import {addMessage, sendMessage, clearChats, fetchChats } from '../features/chats/chatsSlice'; // Adjust the import path  
+import {addMessage, sendMessage, fetchChats, clearChatsThunk } from '../features/chats/chatsSlice'; // Adjust the import path  
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -49,9 +50,6 @@ const Dashboard = () => {
   useEffect(() => {
     // Fetch files when component mounts  
     dispatch(fetchFiles());
-    if(selectedFile){
-      dispatch(fetchChats(selectedFile._id)); 
-    }
   }, [dispatch]);
 
   useEffect(() => {
@@ -74,10 +72,25 @@ const Dashboard = () => {
           setSnackbar({ open: true, message: 'File uploaded successfully!', severity: 'success' });
         })
         .catch((error) => {
-          setSnackbar({ open: true, message: error || 'File upload failed!', severity: 'error' });
+          console.log(error)
+          setSnackbar({ open: true, message: error.error || 'File upload failed!', severity: 'error' });
         });
     }
   };
+
+  const handleClearChat = () => {
+    if (!selectedFile) return;
+  
+    dispatch(clearChatsThunk({ fileId: selectedFile._id }))
+      .unwrap()
+      .then(() => {
+        setSnackbar({ open: true, message: 'Chats cleared successfully!', severity: 'success' });
+      })
+      .catch((error) => {
+        setSnackbar({ open: true, message: error.message || 'Failed to clear chats!', severity: 'error' });
+      });
+  };
+  
 
   const handleSelectFile = (file) => {
     setSelectedFile(file);
@@ -210,9 +223,21 @@ const Dashboard = () => {
           {/* Chat Section */}
           <Grid item xs={12} md={8}>
             <Paper sx={{ p: 2, height: '75vh', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Chat with AI
               </Typography>
+              {selectedFile && (
+                <IconButton
+                  color="error"
+                  onClick={() => dispatch(handleClearChat)}
+                  disabled={chatsLoading}
+                  title="Clear Chats"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
+            </Box>
               <Divider sx={{ mb: 2 }} />
               {/* Chat Messages */}
               <Box

@@ -1,5 +1,5 @@
 // src/features/files/filesSlice.js  
-import { createSlice, createAsyncThunk, combineSlices } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import filesAPI from './filesAPI';
 
 // Thunk to upload a file  

@@ -10,7 +10,14 @@ const fetchChats = ({ fileId }) => {
   return axiosInstance.post('/chats/history', { fileId });
 };
 
+
+const clearChats = ({ fileId }) => {
+  return axiosInstance.post('/chats/clearChats', { fileId } );
+};
+
+
 export default {
   sendMessage,
   fetchChats,
+  clearChats
 };  

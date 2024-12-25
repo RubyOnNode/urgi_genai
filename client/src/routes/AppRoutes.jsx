@@ -1,5 +1,4 @@
-// src/routes/AppRoutes.js  
-import React from 'react';
+
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Register from '../components/Auth/Register';
 import Login from '../components/Auth/Login';
@@ -14,7 +13,9 @@ const AppRoutes = () => {
       <Route
         path="/dashboard"
         element={
+          <PrivateRoute>
             <Dashboard />
+          </PrivateRoute>
         }
       />
       <Route path="/" element={<Navigate to="/login" />} />
@@ -23,4 +24,4 @@ const AppRoutes = () => {
   );
 };
 
-export default AppRoutes;  
+export default AppRoutes;

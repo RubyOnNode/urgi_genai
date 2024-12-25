@@ -1,5 +1,4 @@
 // src/App.js  
-import React from 'react';
 import { CssBaseline } from '@mui/material';
 import AppRoutes from './routes/AppRoutes';
 import { ToastContainer } from 'react-toastify';
