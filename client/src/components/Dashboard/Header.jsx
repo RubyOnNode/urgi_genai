@@ -3,7 +3,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { AppBar, Toolbar, Typography, IconButton, Avatar, Box, Tooltip } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { logout } from '../features/auth/authSlice';
+import { logout } from '../../features/auth/authSlice';
 
 const Header = ({ user }) => {
   const dispatch = useDispatch();

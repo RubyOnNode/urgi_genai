@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Paper, Typography, Divider, Box, List, ListItem, CircularProgress, TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
-import { addMessage, sendMessage, clearChatsThunk } from '../features/chats/chatsSlice';
+import { addMessage, sendMessage, clearChatsThunk } from '../../features/chats/chatsSlice';
 
 const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setSnackbar }) => {
   const dispatch = useDispatch();

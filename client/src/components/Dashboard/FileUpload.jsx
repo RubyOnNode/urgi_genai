@@ -1,9 +1,9 @@
 // components/FileUpload.js  
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, Paper, Typography, Box, CircularProgress } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { uploadFile } from '../features/files/filesSlice';
+import { uploadFile } from '../../features/files/filesSlice';
 
 const FileUpload = ({ loading, error, setSnackbar }) => {
   const dispatch = useDispatch();

@@ -1,11 +1,10 @@
 // components/FilesList.js  
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { List, ListItem, ListItemText, IconButton, Paper, Typography, CircularProgress, Box } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { List, Paper, Typography, CircularProgress, Box } from '@mui/material';
 import FilesListItem from './FilesListItem';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
-import { deleteFile } from '../features/files/filesSlice';
+import { deleteFile } from '../../features/files/filesSlice';
 
 const FilesList = ({ files, loading, error, selectedFile, onSelectFile, setSnackbar }) => {
   const dispatch = useDispatch();
