@@ -5,14 +5,14 @@ const sendMessage = ({ query, fileId }) => {
   return axiosInstance.post('/chats/send', { query, fileId });
 };
 
-const fetchChats = ({ fileId }) => {
+const fetchChats = (fileId) => {
   console.log(fileId)
   return axiosInstance.post('/chats/history', { fileId });
 };
 
 
-const clearChats = ({ fileId }) => {
-  return axiosInstance.post('/chats/clearChats', { fileId } );
+const clearChats = (fileId) => {
+  return axiosInstance.post('/chats/clearChats', { fileId });
 };
 
 

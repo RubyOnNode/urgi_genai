@@ -18,9 +18,9 @@ export const sendMessage = createAsyncThunk(
 // Thunk to fetch chat history  
 export const fetchChats = createAsyncThunk(
   'chats/fetchChats',
-  async ({fileId}, { rejectWithValue }) => {
+  async (fileId, { rejectWithValue }) => {
     try {
-      const response = await chatsAPI.fetchChats({fileId});
+      const response = await chatsAPI.fetchChats(fileId);
       return response.data; // Expected: Array of messages  
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -31,9 +31,9 @@ export const fetchChats = createAsyncThunk(
 // Thunk to clear chats
 export const clearChatsThunk = createAsyncThunk(
   'chats/clearChats',
-  async ({ fileId }, { rejectWithValue }) => {
+  async (fileId, { rejectWithValue }) => {
     try {
-      const response = await chatsAPI.clearChats({ fileId }); // Assuming chatsAPI.clearChats sends the delete request
+      const response = await chatsAPI.clearChats(fileId); // Assuming chatsAPI.clearChats sends the delete request
       console.log("in clear thunk")
       console.log(response.data)
       return response.data; // Expected: { message: 'Chats cleared successfully' }

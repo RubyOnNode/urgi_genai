@@ -1,4 +1,4 @@
-// models/File.js  
+// models/File.js    
 const mongoose = require('mongoose');
 
 const fileSchema = new mongoose.Schema(
@@ -15,6 +15,10 @@ const fileSchema = new mongoose.Schema(
     url: {
       type: String,
       required: [true, 'Please add a file URL'],
+    },
+    blobName: { // New field added  
+      type: String,
+      required: [true, 'Please add the blob name'],
     },
     uploadedAt: {
       type: Date,

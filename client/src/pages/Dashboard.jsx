@@ -22,13 +22,18 @@ import {
   Alert,
   TextField,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { logout } from '../features/auth/authSlice'; // Adjust the import path  
-import { uploadFile, fetchFiles } from '../features/files/filesSlice'; // Adjust the import path  
+import { uploadFile, clearFiles ,fetchFiles, deleteFile} from '../features/files/filesSlice'; // Adjust the import path  
 import {addMessage, sendMessage, fetchChats, clearChatsThunk } from '../features/chats/chatsSlice'; // Adjust the import path  
 
 const Dashboard = () => {
@@ -37,6 +42,9 @@ const Dashboard = () => {
   const files = useSelector((state) => state.files.files);
   const filesLoading = useSelector((state) => state.files.loading);
   const filesError = useSelector((state) => state.files.error);
+  const [fileToDelete, setFileToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
   const chats = useSelector((state) => state.chats.messages);
   const chatsLoading = useSelector((state) => state.chats.loading);
   const chatsError = useSelector((state) => state.chats.error);
@@ -50,7 +58,13 @@ const Dashboard = () => {
   useEffect(() => {
     // Fetch files when component mounts  
     dispatch(fetchFiles());
+
+    // Cleanup: Clear files from store when component unmounts  
+    return () => {
+      dispatch(clearFiles());
+    };
   }, [dispatch]);
+
 
   useEffect(() => {
     // Scroll to the latest message when chats update  
@@ -80,8 +94,7 @@ const Dashboard = () => {
 
   const handleClearChat = () => {
     if (!selectedFile) return;
-  
-    dispatch(clearChatsThunk({ fileId: selectedFile._id }))
+    dispatch(clearChatsThunk(selectedFile._id ))
       .unwrap()
       .then(() => {
         setSnackbar({ open: true, message: 'Chats cleared successfully!', severity: 'success' });
@@ -90,11 +103,38 @@ const Dashboard = () => {
         setSnackbar({ open: true, message: error.message || 'Failed to clear chats!', severity: 'error' });
       });
   };
+
+  // Open confirmation dialog  
+  const handleOpenDeleteDialog = (file) => {
+    setFileToDelete(file);
+  };
+
+  // Close confirmation dialog  
+  const handleCloseDeleteDialog = () => {
+    setFileToDelete(null);
+  };
+
+  // Confirm deletion  
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete) return;
+
+    setDeleting(true);
+    try {
+      await dispatch(deleteFile(fileToDelete._id)).unwrap();
+      // Optionally, show a success message or toast notification  
+    } catch (err) {
+      // Optionally, handle specific errors or show error notifications  
+      console.error('Delete failed:', err);
+    } finally {
+      setDeleting(false);
+      setFileToDelete(null);
+    }
+  };
   
 
   const handleSelectFile = (file) => {
     setSelectedFile(file);
-    dispatch(fetchChats({fileId: file._id})); // Clear previous chat messages when selecting a new file  
+    dispatch(fetchChats(file._id)); // Clear previous chat messages when selecting a new file  
     setSnackbar({ open: true, message: `Selected file: ${file.filename}`, severity: 'info' });
   };
 
@@ -201,6 +241,18 @@ const Dashboard = () => {
                       key={file._id}
                       selected={selectedFile && selectedFile._id === file._id}
                       onClick={() => handleSelectFile(file)}
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering the select handler  
+                            handleOpenDeleteDialog(file);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      }
                     >
                       <ListItemText
                         primary={file.filename}
@@ -216,6 +268,40 @@ const Dashboard = () => {
                     </ListItem>
                   ))}
                 </List>
+              )}
+
+              {/* Delete Confirmation Dialog */}
+              <Dialog
+                open={Boolean(fileToDelete)}
+                onClose={handleCloseDeleteDialog}
+                aria-labelledby="delete-file-dialog-title"
+                aria-describedby="delete-file-dialog-description"
+              >
+                <DialogTitle id="delete-file-dialog-title">Delete File</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="delete-file-dialog-description">
+                    Are you sure you want to delete the file "{fileToDelete?.filename}"? This action cannot be undone.
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseDeleteDialog} disabled={deleting}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleConfirmDelete}
+                    color="error"
+                    disabled={deleting}
+                  >
+                    {deleting ? <CircularProgress size={24} /> : 'Delete'}
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              {/* Display error if any */}
+              {filesError && (
+                <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+                  Error: {filesError}
+                </Typography>
               )}
             </Paper>
           </Grid>

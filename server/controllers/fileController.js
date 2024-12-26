@@ -75,9 +75,10 @@ const uploadFile = (req, res) => {
         user: req.user._id,
         filename: req.file.originalname,
         url: blockBlobClient.url,
+        blobName: blobName
       });
 
-      res.status(201).json({id: file._id, filename: file.filename});
+      res.status(201).json({_id: file._id, filename: file.filename});
 
     } catch (error) {
       console.error('Azure Blob upload error:', error.message);
@@ -101,7 +102,59 @@ const getUserFiles = async (req, res) => {
   }
 };
 
+
+// @desc    Delete a user file  
+// @route   DELETE /api/files/:id  
+// @access  Private  
+const deleteFile = async (req, res) => {
+  const fileId = req.body.fileId;
+  console.log(`Delete file req ${req.body}`)
+  console.log(req.body)
+
+  try {
+    // Find the file by ID  
+    const file = await File.findById(fileId);
+
+    if (!file) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    // Check if the file belongs to the authenticated user  
+    if (file.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized to delete this file' });
+    }
+
+    // Retrieve the blobName from the file document  
+    const blobName = file.blobName;
+
+    if (!blobName) {
+      return res.status(500).json({ message: 'Blob name not found in file metadata' });
+    }
+
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    // Delete the blob from Azure Blob Storage  
+    const deleteBlobResponse = await blockBlobClient.deleteIfExists();
+
+    if (deleteBlobResponse.succeeded) {
+      console.log(`Blob ${blobName} deleted successfully.`);
+    } else {
+      console.warn(`Blob ${blobName} was not found or already deleted.`);
+    }
+
+    // Remove the file document from MongoDB  
+    await file.deleteOne();  
+
+    res.json({ message: 'File deleted successfully' });
+
+  } catch (error) {
+    console.error('Delete file error:', error.message);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   uploadFile,
   getUserFiles,
-};  
+  deleteFile, // Export the new deleteFile function  
+}; 
