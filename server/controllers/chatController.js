@@ -1,6 +1,7 @@
 // controllers/chatController.js  
 const Chat = require('../models/Chat');
 const File = require('../models/File');
+const {aiBot} = require("../ai_bot/bot")
 
 // Simulate AI response (replace with actual AI integration)  
 const getAIResponse = (query) => {
@@ -33,7 +34,7 @@ const sendMessage = async (req, res) => {
     }
 
     // Get AI response  
-    const aiResponse = getAIResponse(query);
+    const aiResponse = await aiBot(query);
 
     // Save chat to DB  
     const chat = await Chat.create({
