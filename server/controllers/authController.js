@@ -95,7 +95,27 @@ const authUser = async (req, res) => {
   }
 };
 
+
+// @desc    Get current user  
+// @route   GET /api/auth/me  
+// @access  Private   
+const getCurrentUser = async (req, res) => {
+  console.log("Fetching USer")
+  // req.user is set in the authMiddleware  
+  if (!req.user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  res.json({
+    _id: req.user.id,
+    username: req.user.username,
+    email: req.user.email,
+    // Add any additional fields you want to expose  
+  });
+};
+
 module.exports = {
   registerUser,
   authUser,
+  getCurrentUser
 };  

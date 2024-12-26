@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
-import { Button, Container, Typography, Box, Alert } from '@mui/material';
+import { Button, Container, Typography, Box, Alert, Link as MUILink } from '@mui/material';
 import { registrationSchema } from '../../utils/validationSchema';
 import { register } from '../../features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';  
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -101,6 +101,14 @@ const Register = () => {
                                     {localError || error}
                                 </Alert>
                             )}
+                            <Box sx={{ mt: 2, textAlign: 'center' }}>
+                                <Typography variant="body2">
+                                    Already have an account?{' '}
+                                    <MUILink component={RouterLink} to="/login" underline="hover">
+                                        Login
+                                    </MUILink>
+                                </Typography>
+                            </Box>  
                         </Form>
                     )}
                 </Formik>
