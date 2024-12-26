@@ -17,7 +17,6 @@ const Login = () => {
 
   useEffect(() => {
     if (token) {
-      console.log(`In Login component ${token}`)
       navigate('/dashboard');
     }
   }, [token, navigate]);
@@ -27,7 +26,6 @@ const Login = () => {
     setLocalError(null); // Clear previous error  
     try {
       await dispatch(login(values)).unwrap(); // Dispatch action and wait for response  
-      console.log('Login successful');
     } catch (err) {
       setLocalError(err.message || 'Login failed'); // Handle errors  
     } finally {

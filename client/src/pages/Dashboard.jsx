@@ -11,7 +11,7 @@ import Footer from '../components/Dashboard/Footer';
 import SnackbarNotification from '../components/Dashboard/SnackbarNotification';
 
 import { fetchFiles, clearFiles } from '../features/files/filesSlice';
-import { fetchChats, clearChatsThunk } from '../features/chats/chatsSlice';
+import { fetchChats } from '../features/chats/chatsSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -36,9 +36,8 @@ const Dashboard = () => {
     // Cleanup: Clear files from store when component unmounts    
     return () => {
       dispatch(clearFiles());
-      dispatch(clearChatsThunk(selectedFile?._id));
     };
-  }, [dispatch, selectedFile]);
+  }, [dispatch]);
 
   useEffect(() => {
     // Scroll to the latest message when chats update    

@@ -34,12 +34,8 @@ export const clearChatsThunk = createAsyncThunk(
   async (fileId, { rejectWithValue }) => {
     try {
       const response = await chatsAPI.clearChats(fileId); // Assuming chatsAPI.clearChats sends the delete request
-      console.log("in clear thunk")
-      console.log(response.data)
       return response.data; // Expected: { message: 'Chats cleared successfully' }
     } catch (err) {
-      console.log("in clear eror")
-      console.log(err.response.data)
       return rejectWithValue(err.response.data);
     }
   }
@@ -111,7 +107,6 @@ const chatsSlice = createSlice({
       })
       .addCase(clearChatsThunk.rejected, (state, action) => {
         state.loading = false;
-        console.log("Tried tgus")
         state.error = action.payload.message || 'Failed to clear chats';
       });
   },

@@ -45,7 +45,6 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authAPI.login(credentials);
-      console.log(`Response from Database: ${JSON.stringify(response.data)}`);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);

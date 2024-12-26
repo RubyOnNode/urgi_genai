@@ -12,4 +12,4 @@ router.post('/login', authUser);
 
 router.post('/fetch', protect, getCurrentUser)
 
-module.exports = router;  
+module.exports = router;

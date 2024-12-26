@@ -25,7 +25,6 @@ const Register = () => {
         setLocalError(null); // Clear previous error
         try {
             await dispatch(register(values)).unwrap(); // Dispatch action and wait for response
-            console.log('Registration successful');
         } catch (err) {
             setLocalError(err.message || 'Registration failed'); // Handle errors
         } finally {

@@ -17,7 +17,6 @@ const FileUpload = ({ loading, error, setSnackbar }) => {
           setSnackbar({ open: true, message: 'File uploaded successfully!', severity: 'success' });
         })
         .catch((error) => {
-          console.error(error);
           setSnackbar({ open: true, message: error.error || 'File upload failed!', severity: 'error' });
         });
     }

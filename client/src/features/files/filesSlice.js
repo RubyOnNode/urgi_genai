@@ -8,7 +8,6 @@ export const uploadFile = createAsyncThunk(
   async (file, { rejectWithValue }) => {
     try {
       const response = await filesAPI.uploadFile(file);
-      console.log(response.data);
       return response.data; // Expected: { _id, filename, url, uploadedAt }    
     } catch (err) {
       // Check if the error response exists  
@@ -43,7 +42,6 @@ export const deleteFile = createAsyncThunk(
   'files/deleteFile',
   async (fileId, { rejectWithValue }) => {
     try {
-      console.log(fileId)
       await filesAPI.deleteFile(fileId);
       return fileId; // Return the ID to remove it from the state  
     } catch (err) {
@@ -107,7 +105,6 @@ const filesSlice = createSlice({
       .addCase(fetchFiles.fulfilled, (state, action) => {
         state.loading = false;
         state.files = action.payload;
-        console.log(state.files);
       })
       .addCase(fetchFiles.rejected, (state, action) => {
         state.loading = false;

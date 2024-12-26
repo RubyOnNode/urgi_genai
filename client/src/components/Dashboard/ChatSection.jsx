@@ -57,7 +57,6 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
         <Typography variant="h6" gutterBottom>
           Chat with AI
         </Typography>
-        {selectedFile && (
           <IconButton
             color="error"
             onClick={handleClearChat}
@@ -66,7 +65,6 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
           >
             <DeleteIcon />
           </IconButton>
-        )}
       </Box>
       <Divider sx={{ mb: 2 }} />
       {/* Chat Messages */}
