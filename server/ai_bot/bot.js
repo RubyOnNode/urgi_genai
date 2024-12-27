@@ -2,10 +2,10 @@ const { AzureChatOpenAI } = require("@langchain/openai");
 const { HumanMessage, SystemMessage } = require("@langchain/core/messages");
 
 const model = new AzureChatOpenAI({
-  azureOpenAIApiKey: "7c159721e8c149348c5fba2ac077e155",
-  azureOpenAIApiInstanceName: "openai-red-eastus2-01-pre-prod",
-  azureOpenAIApiDeploymentName: "model-chat-completetion-gpt-4o-mini-pre-prod",
-  azureOpenAIApiVersion: "2023-03-15-preview",
+  azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY,
+  azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
+  azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
+  azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION,
 });
 
 const aiBot = async (query) => {
