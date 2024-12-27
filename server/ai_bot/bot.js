@@ -11,7 +11,7 @@ const model = new AzureChatOpenAI({
 const aiBot = async (query) => {
   try {
     const messages = [
-      new SystemMessage("Be a Helpful assistant and answer the query"),
+      new SystemMessage("Answer the user Query"),
       new HumanMessage(query),
     ];
 

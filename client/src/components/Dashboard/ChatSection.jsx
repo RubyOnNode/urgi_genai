@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 // components/ChatSection.js  
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Paper, Typography, Divider, Box, List, ListItem, CircularProgress, TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -148,4 +149,4 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
   );
 };
 
-export default ChatSection;  
+export default ChatSection;
