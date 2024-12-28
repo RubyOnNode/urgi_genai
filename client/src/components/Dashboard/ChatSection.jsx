@@ -144,7 +144,7 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
                       wordBreak: 'break-word',
                     }}
                   >
-                    <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>{msg.text}</Typography>
+                    <Typography variant="body1" >{msg.text}</Typography>
                     <Typography variant="caption" sx={{ display: 'block', textAlign: 'right' }}>
                       {new Date(msg.timestamp).toLocaleTimeString()}
                     </Typography>

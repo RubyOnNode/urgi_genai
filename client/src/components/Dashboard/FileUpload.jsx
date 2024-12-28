@@ -33,6 +33,10 @@ const FileUpload = ({ loading, error, setSnackbar }) => {
         startIcon={<CloudUploadIcon />}
         disabled={loading}
         fullWidth
+        sx={{
+          backgroundColor: '#73BF44',
+           // Light green or any color you choose
+        }}  
       >
         {loading ? 'Uploading...' : 'Select File'}
         <input type="file" hidden onChange={handleFileChange} />
