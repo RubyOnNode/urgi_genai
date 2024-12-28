@@ -1,91 +1,49 @@
-// src/components/Dashboard/FileUpload.js    
-import { useState } from 'react';
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Alert,
-  Typography,
-} from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { uploadFile, fetchFiles } from '../../features/files/filesSlice';
-import { toast } from 'react-toastify';
+// components/FileUpload.js  
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { Button, Paper, Typography } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { uploadFile } from '../../features/files/filesSlice';
 
-const FileUpload = () => {
+const FileUpload = ({ loading, error, setSnackbar }) => {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.files);
-
-  // useState  
-  const [file, setFile] = useState(null);
-  const [localError, setLocalError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    setLocalError('');
-    setSuccessMessage('');
-  };
-
-  const handleUpload = () => {
-    if (!file) {
-      setLocalError('Please select a file to upload.');
-      return;
+    const file = e.target.files[0];
+    if (file) {
+      dispatch(uploadFile(file))
+        .unwrap()
+        .then(() => {
+          setSnackbar({ open: true, message: 'File uploaded successfully!', severity: 'success' });
+        })
+        .catch((error) => {
+          setSnackbar({ open: true, message: error.error || 'File upload failed!', severity: 'error' });
+        });
     }
-
-    // Optionally, add file type or size validations here    
-
-    dispatch(uploadFile(file))
-      .unwrap()
-      .then(() => {
-        setSuccessMessage('File uploaded successfully!');
-        setFile(null);
-        toast.success('File uploaded successfully!');
-        dispatch(fetchFiles()); // Fetch updated list of files  
-      })
-      .catch(() => {
-        // Error is handled by Redux    
-        toast.error('Failed to upload file.');
-      });
   };
 
   return (
-    <Box>
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-      {localError && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
-          {localError}
-        </Alert>
-      )}
-      {successMessage && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {successMessage}
-        </Alert>
-      )}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <Button variant="contained" component="label" sx={{ mr: 2 }}>
-          Select File
-          <input type="file" hidden onChange={handleFileChange} />
-        </Button>
-        <Typography variant="body2">
-          {file ? file.filename : 'No file selected'}
-        </Typography>
-      </Box>
+    <Paper sx={{ p: 2, mb: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Upload File
+      </Typography>
       <Button
         variant="contained"
-        color="primary"
-        onClick={handleUpload}
-        disabled={loading || !file}
-        startIcon={loading ? <CircularProgress size={20} /> : null}
+        component="label"
+        startIcon={<CloudUploadIcon />}
+        disabled={loading}
+        fullWidth
       >
-        {loading ? 'Uploading...' : 'Upload'}
+        {loading ? 'Uploading...' : 'Select File'}
+        <input type="file" hidden onChange={handleFileChange} />
       </Button>
-    </Box>
+      {error && (
+        <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+          {error}
+        </Typography>
+      )}
+    </Paper>
   );
-
 };
 
 export default FileUpload;  

@@ -12,6 +12,7 @@ const rateLimit = require('express-rate-limit');
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const fileRoutes = require('./routes/fileRoutes');
+const mfgRoutes = require("./routes/mfgBotRoutes")
 
 // Connect to MongoDB  
 connectDB();
@@ -33,6 +34,7 @@ const authLimiter = rateLimit({
 app.use('/api/auth', authLimiter ,authRoutes);
 app.use('/api/chats', chatRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/mfg_bot', mfgRoutes);
 
 // Root Route  
 app.get('/', (req, res) => {

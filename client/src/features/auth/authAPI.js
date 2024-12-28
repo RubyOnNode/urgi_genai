@@ -9,8 +9,13 @@ const login = (credentials) => {
   return axiosInstance.post('/auth/login', credentials);
 };
 
+const getCurrentUser = () => {
+  return axiosInstance.post('/auth/fetch'); // Adjust the endpoint based on your API  
+};
+
 export default {
   register,
   login,
-  // Future auth-related API calls  
+  getCurrentUser,
+  // Future auth-related API calls    
 };  

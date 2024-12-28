@@ -15,7 +15,12 @@ const fetchFiles = () => {
   return axiosInstance.get('/files');
 };
 
+const deleteFile = (fileId) => {
+  return axiosInstance.post("/files/delete", {fileId})
+}
+
 export default {
   uploadFile,
   fetchFiles,
+  deleteFile
 };  

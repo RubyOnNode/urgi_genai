@@ -2,26 +2,47 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import chatsAPI from './chatsAPI';
 
-// Thunk to send a message  
+// Thunk to send a message
 export const sendMessage = createAsyncThunk(
   'chats/sendMessage',
-  async ({ query, fileId }, { rejectWithValue }) => {
+  async ({ query, mode, fileId }, { rejectWithValue }) => {
     try {
-      const response = await chatsAPI.sendMessage({ query, fileId });
-      return response.data; // Expected: { message: 'AI response' }  
+      let response;
+      
+      if (mode === "file") {
+        response = await chatsAPI.sendMessage({ query, fileId });
+      } else {
+        response = await chatsAPI.sendMessageMfgBot({ query });
+      }
+      
+      return response.data; // Expected: { message: 'AI response' }
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "An error occurred");
+    }
+  }
+);
+
+
+// Thunk to fetch chat history  
+export const fetchChats = createAsyncThunk(
+  'chats/fetchChats',
+  async (fileId, { rejectWithValue }) => {
+    try {
+      const response = await chatsAPI.fetchChats(fileId);
+      return response.data; // Expected: Array of messages  
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
   }
 );
 
-// Thunk to fetch chat history  
-export const fetchChats = createAsyncThunk(
-  'chats/fetchChats',
-  async (_, { rejectWithValue }) => {
+// Thunk to clear chats
+export const clearChatsThunk = createAsyncThunk(
+  'chats/clearChats',
+  async (fileId, { rejectWithValue }) => {
     try {
-      const response = await chatsAPI.fetchChats();
-      return response.data; // Expected: Array of messages  
+      const response = await chatsAPI.clearChats(fileId); // Assuming chatsAPI.clearChats sends the delete request
+      return response.data; // Expected: { message: 'Chats cleared successfully' }
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
@@ -55,10 +76,10 @@ const chatsSlice = createSlice({
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.loading = false;
         state.messages.push({
-          _id: action.payload._id,
           sender: 'bot',
           text: action.payload.message,
           timestamp: action.payload.timestamp,
+          fileId: action.payload.fileId
         });
       })
       .addCase(sendMessage.rejected, (state, action) => {
@@ -82,6 +103,19 @@ const chatsSlice = createSlice({
       .addCase(fetchChats.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message || 'Failed to fetch chats';
+      })
+      // clearChats
+      .addCase(clearChatsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(clearChatsThunk.fulfilled, (state) => {
+        state.loading = false;
+        state.messages = []; // Clear all messages in state
+      })
+      .addCase(clearChatsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message || 'Failed to clear chats';
       });
   },
 });
