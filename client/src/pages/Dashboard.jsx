@@ -14,6 +14,7 @@ import { fetchFiles, clearFiles } from '../features/files/filesSlice';
 import { fetchChats } from '../features/chats/chatsSlice';
 
 const Dashboard = () => {
+  console.log("dashrerender")
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const files = useSelector((state) => state.files.files);

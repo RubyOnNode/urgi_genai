@@ -2,7 +2,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Paper, Typography } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { uploadFile } from '../../features/files/filesSlice';
 
 const FileUpload = ({ loading, error, setSnackbar }) => {
@@ -30,7 +30,7 @@ const FileUpload = ({ loading, error, setSnackbar }) => {
       <Button
         variant="contained"
         component="label"
-        startIcon={<UploadFileIcon />}
+        startIcon={<CloudUploadIcon />}
         disabled={loading}
         fullWidth
       >

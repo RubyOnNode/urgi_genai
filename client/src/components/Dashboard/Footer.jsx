@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <Box component="footer" sx={{ p: 2, backgroundColor: 'background.paper' }}>
       <Typography variant="body2" color="text.secondary" align="center">
-        © {new Date().getFullYear()} AI Chat App
+        © {new Date().getFullYear()} ReD.
       </Typography>
     </Box>
   );

@@ -1,30 +1,53 @@
 /* eslint-disable react/prop-types */
-// components/ChatSection.js  
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Paper, Typography, Divider, Box, List, ListItem, CircularProgress, TextField, IconButton } from '@mui/material';
+import {
+  Paper,
+  Typography,
+  Divider,
+  Box,
+  List,
+  ListItem,
+  CircularProgress,
+  TextField,
+  IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
-import { addMessage, sendMessage, clearChatsThunk } from '../../features/chats/chatsSlice';
+import { addMessage, sendMessage, clearChatsThunk, clearChats, fetchChats } from '../../features/chats/chatsSlice';
 
 const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setSnackbar }) => {
+
+  console.log("chat rerenwer")
   const dispatch = useDispatch();
   const [newMessage, setNewMessage] = useState('');
+  const [chatMode, setChatMode] = useState('file'); // 'file' or 'mfgBot'
 
   const handleSendMessage = () => {
-    if (newMessage.trim() === '' || !selectedFile) return;
+    if (newMessage.trim() === '') return;
 
     const message = {
       text: newMessage,
       sender: 'user',
       timestamp: new Date().toISOString(),
-      fileId: selectedFile._id,
     };
 
-    // Optimistically update the UI with the new message  
+
+    if (!selectedFile && chatMode === "file") {
+      setSnackbar({ open: true, message: 'Please select a file to chat with!', severity: 'warning' });
+      return;
+    }
+
+    if (chatMode === "file"){
+      message.fileId = selectedFile._id;
+    }
+
+    // Optimistically update the UI
     dispatch(addMessage(message));
 
-    dispatch(sendMessage({ query: newMessage, fileId: selectedFile._id }))
+    dispatch(sendMessage({ query: newMessage, mode: chatMode, fileId: message.fileId }))
       .unwrap()
       .then(() => {
         setNewMessage('');
@@ -36,6 +59,7 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
 
   const handleClearChat = () => {
     if (!selectedFile) return;
+
     dispatch(clearChatsThunk(selectedFile._id))
       .unwrap()
       .then(() => {
@@ -44,6 +68,20 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
       .catch((error) => {
         setSnackbar({ open: true, message: error.message || 'Failed to clear chats!', severity: 'error' });
       });
+  };
+
+  const handleToggle = (e) =>{
+    const newMode = e.target.value;
+    if ( newMode === "mfgBot" && chatMode !== "mfgBot"){
+      dispatch(clearChats());
+    }
+
+    if ( newMode === "file" && chatMode !== "file"){
+      dispatch(clearChats());
+      dispatch(fetchChats(selectedFile._id))
+    }
+
+    setChatMode(e.target.value);
   };
 
   const handleKeyPress = (e) => {
@@ -55,17 +93,27 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
   return (
     <Paper sx={{ p: 2, height: '75vh', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Chat with AI
-        </Typography>
-          <IconButton
-            color="error"
-            onClick={handleClearChat}
-            disabled={loading}
-            title="Clear Chats"
-          >
-            <DeleteIcon />
-          </IconButton>
+        <ToggleButtonGroup
+          value={chatMode}
+          exclusive
+          onChange={handleToggle}
+          aria-label="chat mode"
+        >
+          <ToggleButton value="file" aria-label="Chat with File">
+            Chat with File
+          </ToggleButton>
+          <ToggleButton value="mfgBot" aria-label="Mfg Bot">
+            Mfg Bot
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <IconButton
+          color="error"
+          onClick={handleClearChat}
+          disabled={loading}
+          title="Clear Chats"
+        >
+          <DeleteIcon />
+        </IconButton>
       </Box>
       <Divider sx={{ mb: 2 }} />
       {/* Chat Messages */}
@@ -77,10 +125,10 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
           paddingRight: 1,
         }}
       >
-        {selectedFile ? (
+        {selectedFile || chatMode === 'mfgBot' ? (
           chats.length === 0 && !loading ? (
             <Typography variant="body2" color="text.secondary">
-              Start the conversation by typing a message below.
+              Query related to manufacturing facility : Jaipur and Dholera.
             </Typography>
           ) : (
             <List>
@@ -96,7 +144,7 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
                       wordBreak: 'break-word',
                     }}
                   >
-                    <Typography variant="body1">{msg.text}</Typography>
+                    <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>{msg.text}</Typography>
                     <Typography variant="caption" sx={{ display: 'block', textAlign: 'right' }}>
                       {new Date(msg.timestamp).toLocaleTimeString()}
                     </Typography>
@@ -134,13 +182,13 @@ const ChatSection = ({ selectedFile, chats, loading, error, messagesEndRef, setS
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
-          disabled={!selectedFile || loading}
+          disabled={(chatMode === 'file' && !selectedFile) || loading}
         />
         <IconButton
           color="primary"
           sx={{ ml: 1 }}
           onClick={handleSendMessage}
-          disabled={!selectedFile || loading || newMessage.trim() === ''}
+          disabled={(chatMode === 'file' && !selectedFile) || loading || newMessage.trim() === ''}
         >
           <SendIcon />
         </IconButton>

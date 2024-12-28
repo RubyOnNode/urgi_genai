@@ -1,5 +1,7 @@
 //controllers/mfgBotController.js
 const axios = require('axios');
+const Chat = require('../models/Chat');
+const { response } = require('express');
 
 // API endpoint
 const mfgBotBaseUrl = process.env.MFG_BOT_BASE_URL;
@@ -8,6 +10,8 @@ const apiUrl = `${mfgBotBaseUrl}/run-query`;
 // Define a POST route to handle queries
 const runMfgBot = async (req, res) => {
   const { query } = req.body;
+
+  console.log(req.body)
 
   if (!query) {
     return res.status(400).json({ error: "Query is required" });
@@ -23,10 +27,21 @@ const runMfgBot = async (req, res) => {
     const data = { query };
 
     // Make the API call
-    const response = await axios.post(apiUrl, data, { headers });
+    const aiResponse = await axios.post(apiUrl, data, { headers });
 
-    // Send the API response back to the client
-    res.status(200).json(response.data);
+    // Save chat to DB  
+    const chat = await Chat.create({
+      user: req.user._id,
+      message: query,
+      response: aiResponse.data.result,
+    });
+
+    res.status(201).json({
+      _id: chat._id,
+      message: chat.response,
+      timestamp: chat.createdAt,
+    });
+
   } catch (error) {
     if (error.response) {
       // Handle errors returned from the external API

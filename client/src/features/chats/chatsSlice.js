@@ -2,18 +2,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import chatsAPI from './chatsAPI';
 
-// Thunk to send a message  
+// Thunk to send a message
 export const sendMessage = createAsyncThunk(
   'chats/sendMessage',
-  async ({ query, fileId }, { rejectWithValue }) => {
+  async ({ query, mode, fileId }, { rejectWithValue }) => {
     try {
-      const response = await chatsAPI.sendMessage({ query, fileId });
-      return response.data; // Expected: { message: 'AI response' }  
+      let response;
+      
+      if (mode === "file") {
+        response = await chatsAPI.sendMessage({ query, fileId });
+      } else {
+        response = await chatsAPI.sendMessageMfgBot({ query });
+      }
+      
+      return response.data; // Expected: { message: 'AI response' }
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(err.response?.data || "An error occurred");
     }
   }
 );
+
 
 // Thunk to fetch chat history  
 export const fetchChats = createAsyncThunk(
