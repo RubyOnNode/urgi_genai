@@ -10,6 +10,8 @@ router.post('/upload', protect, uploadFile);
 // Get User Files  
 router.get('/', protect, getUserFiles);
 
-router.post("/delete", protect, deleteFile)
+router.post("/delete", protect, deleteFile);
+
+router.post("/create_vector_store", protect, createVectorStore);
 
 module.exports = router;  

@@ -1,7 +1,6 @@
 //controllers/mfgBotController.js
 const axios = require('axios');
 const Chat = require('../models/Chat');
-const { response } = require('express');
 
 // API endpoint
 const mfgBotBaseUrl = process.env.MFG_BOT_BASE_URL;

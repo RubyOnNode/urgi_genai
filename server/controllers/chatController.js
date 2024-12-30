@@ -1,13 +1,7 @@
 // controllers/chatController.js  
 const Chat = require('../models/Chat');
 const File = require('../models/File');
-const {aiBot} = require("../ai_bot/bot")
-
-// Simulate AI response (replace with actual AI integration)  
-const getAIResponse = (query) => {
-  // Placeholder for AI logic  
-  return `You said: "${query}". This is a simulated AI response.`;
-};
+const {aiBot} = require("../ai_bot/bot");
 
 // @desc    Send a message and get AI response  
 // @route   POST /api/chats/send  
@@ -87,8 +81,7 @@ const getChatHistory = async (req, res) => {
 
 
 
-// controllers/chatController.js
-
+// clearChats
 const clearChats = async (req, res) => {
   console.log("Clear Chats")
   console.log(req.body)
