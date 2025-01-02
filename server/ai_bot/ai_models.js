@@ -1,9 +1,9 @@
 const { AzureChatOpenAI, AzureOpenAIEmbeddings } = require("@langchain/openai");
 
-const AZURE_OPENAI_API_INSTANCE_NAME = "openai-red-eastus2-01-pre-prod";
-const LLM_DEPLOYMENT_NAME = "model-chat-completetion-gpt-4o-mini-pre-prod";
-const EMBED_DEPLOYMENT_NAME = "model-embeddings-text-embedding-3-large-pre-prod"
-const AZURE_OPENAI_API_KEY = "7c159721e8c149348c5fba2ac077e155";
+const AZURE_OPENAI_API_INSTANCE_NAME = "";
+const LLM_DEPLOYMENT_NAME = "";
+const EMBED_DEPLOYMENT_NAME = ""
+const AZURE_OPENAI_API_KEY = "";
 const AZURE_OPENAI_API_VERSION = "2023-03-15-preview";
 
 
